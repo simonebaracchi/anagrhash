@@ -19,6 +19,7 @@ Usage: anagrhash [OPTIONS] [token1 [token2 ...]] { xtoken1 xtoken2 [...] }
 Available options:
         -h hash         : Stops when hash is matched
         -a word         : Use every letter of word as token (makes anagrams of word)
+        -r regex        : Stops when hash matches regex
         -s separators   : Use separators between tokens
         -l n            : Use at most n tokens (default: 8)
         -i filename     : Load every line of file as a token
@@ -26,6 +27,7 @@ Available options:
         -o filename     : Writes anagrams to file
         [any word]      : Use word as token
         { [any word] }  : Add the words specified between curly brackets to an exclusive-tokens group
+        -n              : Terminates every token with a newline before generating a hash.
         -v              : Verbose mode.
         -vv             : Also prints every generated key.
         -?              : Prints this help.
@@ -77,5 +79,9 @@ e.g. earth
 
 # anagrhash -l 2 hello world earth -h fc5e038d38a57032085441e7fe7010b0
 -> String 'helloworld' matches hash fc5e038d38a57032085441e7fe7010b0, success!
+
+# anagrhash -a abcdefghijklmnopqrstuvwxyz -n -r 'baddcafe'
+-> Tries to find a combination of "[a-z]{8}\n" which hashes to "baddcafe"
+
 </pre>
 
