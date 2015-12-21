@@ -11,6 +11,7 @@
 extern char* separators;
 extern int token_limit;
 extern int max_key_length;
+extern int terminate_with_newline;
 
 int search( GSList* tokens, GSList* xtokens );
 char* print( GSList *list );

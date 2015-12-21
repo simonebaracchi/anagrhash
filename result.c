@@ -12,6 +12,8 @@
 #include <pthread.h>
 #include <sched.h>
 //#include <semaphore.h>
+#include <sys/types.h>
+#include <regex.h>
 
 #include <glib.h>
 #include <mhash.h>
@@ -40,8 +42,12 @@
 
 /* Which hash method are we using? (References the "methods" array) */
 int method_index;
+/* Should we calculate the hash */
+int hash_needed = FALSE;
 /* Hash we are trying to match */
 char *target_hash = NULL;
+/* Regex we are trying to satisfy */
+regex_t target_regex;
 /* File we should write keys to */
 FILE *f_output = NULL;
 /* String that matches target_hash */
@@ -66,6 +72,7 @@ int candidates_count = 0;
 #define MAX_CANDIDATES MAX_THREADS * THREAD_BUF_SIZE * 40
 
 void *hashing_thread( void* );
+int initialize_server();
 
 struct method { 
 	/* Hash length, in bytes */
@@ -91,9 +98,24 @@ int init_outfile( char *output_file ) {
 		return SUCCESS;
 }
 
+int initialize_regex( char* regex ) {
+	int error = 0;
+	char errbuf[1024];
+	hash_needed = TRUE;
+	method_index = 0;
+	if((error = regcomp(&target_regex, regex, REG_EXTENDED|REG_NOSUB)) != 0) {
+		regerror(error, &target_regex, errbuf, sizeof(errbuf));
+		printf("Error in regex: %s\n", errbuf);
+		return ERROR;
+	}
+
+	return initialize_server();
+}
+
 int initialize_hash_method( char* hash ) {
 	/* Store the target hash */
 	target_hash = hash;
+	hash_needed = TRUE;
 	/* Find a "plausible" hash algorithm for string "hash" */
 	int i=0;
 	int found=FALSE;
@@ -111,6 +133,11 @@ int initialize_hash_method( char* hash ) {
 		printf("No hash method found that matches the target hash.\n");
 		return ERROR;
 	}
+	return initialize_server();
+}
+
+int initialize_server() {
+	int i;
 	// TODO initialize the hashing algorithm?
 	// initialize the thread server
 	pthread_mutex_init( &list_access, NULL );
@@ -138,6 +165,7 @@ void deinit_hash() {
 		}
 	}
 #endif
+	// TODO properly deinit regex with regfree()
 }
 
 int perform_hash( char* string ) {
@@ -161,16 +189,24 @@ int perform_hash( char* string ) {
 
 
 	/* check if calculated hash is the one we're looking for */
-	int result;
-	if( strcmp( buffer, target_hash ) == 0 ) {
-		printf("String '%s' matches hash %s, success!\n", string, target_hash );
-		// I'm setting a global variable within a thread without mutexes -- but
-		// this should happen just once
-		solution_found = malloc(max_key_length);
-		strcpy( solution_found, buffer );
-		result = SUCCESS;
-	} else {
-		result = ERROR;
+	int result = ERROR;
+	if( target_hash != NULL ) {
+		if( strcmp( buffer, target_hash ) == 0 ) {
+			printf("String '%s' matches hash %s, success!\n", string, target_hash );
+			// I'm setting a global variable within a thread without mutexes -- but
+			// this should happen just once
+			solution_found = malloc(max_key_length);
+			strcpy( solution_found, buffer );
+			result = SUCCESS;
+		}
+	} else { 
+		regmatch_t match;
+		if(regexec(&target_regex, buffer, 1, &match, 0) == 0) {
+			printf("String '%s' matches regex, success!\n", string );
+			solution_found = malloc(max_key_length);
+			strcpy( solution_found, buffer );
+			result = SUCCESS;
+		}
 	}
 	return result;
 }
@@ -231,7 +267,7 @@ int handle_result( char* string ) {
 	}
 
 	/* Don't bother to hash it if we don't know what to look for */
-	if( target_hash == NULL ) {
+	if( hash_needed == FALSE ) {
 		free(string);
 		return ERROR;
 	}

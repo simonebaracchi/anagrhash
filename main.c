@@ -20,6 +20,7 @@ char* program_version = "0.1";
 char* separators = NULL;
 int verbose = FALSE;
 int token_limit = 8;
+int terminate_with_newline = FALSE;
 /* end of global variables */
 
 #define MAX_TOKEN_LENGTH 1024
@@ -29,11 +30,13 @@ struct command_line_arg {
 	int arguments;
 	char *alias;
 };
-#define NUM_OPTS 9
+#define NUM_OPTS 11
 struct command_line_arg args[] = {
 	{'h', 1, "hash" },
 	{'a', 1, "anagram" },
+	{'r', 1, "regex" },
 	{'s', 1, "sep" },
+	{'n', 0, "newline" },
 	{'l', 1, "limit" },
 	{'i', 1, "input" },
 	{'e', 1, "ex-input" },
@@ -49,6 +52,7 @@ void usage() {
 	printf("Available options:\n");
 	printf("	-h hash		: Stops when hash is matched\n");
 	printf("	-a word		: Use every letter of word as token (makes anagrams of word)\n");
+	printf("	-r regex	: Stops when hash matches regex\n");
 	printf("	-s separators	: Use separators between tokens\n");
 	printf("	-l n		: Use at most n tokens (default: %d)\n", token_limit);
 	printf("	-i filename	: Load every line of file as a token\n");
@@ -56,9 +60,11 @@ void usage() {
 	printf("	-o filename	: Writes anagrams to file\n");
 	printf("	[any word]	: Use word as token\n");
 	printf("	{ [any word] }	: Add the words specified between curly brackets to an exclusive-tokens group\n");
+	printf("	-n         	: Terminates every token with a newline before generating a hash.\n");
 	printf("	-v		: Verbose mode.\n");
 	printf("	-vv		: Also prints every generated key.\n");
 	printf("	-?		: Prints this help.\n");
+	// TODO let user choose the hash method
 }
 
 int parse_xtokens( int* index, int argc, char* argv[], GSList** xtokens ) {
@@ -120,6 +126,11 @@ int getopts( int argc, char *argv[], GSList** tokens, GSList** xtokens ) {
 						data[1] = '\0';
 						*tokens = g_slist_prepend( *tokens, data );
 					}
+					break;
+				case 'r':
+					i++;
+					if( initialize_regex( argv[i] ) != SUCCESS )
+						return ERROR;
 					break;
 				case 's':
 					i++;
@@ -195,6 +206,9 @@ int getopts( int argc, char *argv[], GSList** tokens, GSList** xtokens ) {
 					printf("Loaded %d exclusive tokens from %s.\n", token_counter, argv[i] );
 					break;
 				} 
+				case 'n':
+					terminate_with_newline = TRUE;
+					break;
 				case 'o':
 					i++;
 					if( init_outfile( argv[i] ) != SUCCESS )

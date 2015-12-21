@@ -40,6 +40,8 @@ int generate_combination( int depth, GSList **fixed, GSList **tokens, int t_size
 			do{
 				sprintf(buf, "%s%s", buf, (char*)list_it->data );
 			}while( (list_it = g_slist_next(list_it)) != NULL );
+			if( terminate_with_newline )
+				strcat(buf, "\n");
 			result = handle_result( buf );
 		} else {
 			int j;
@@ -61,6 +63,8 @@ int generate_combination( int depth, GSList **fixed, GSList **tokens, int t_size
 						sprintf(buf, "%s%c%s", buf, separators[j], (char*)list_it->data );
 					}
 				}while( (list_it = g_slist_next(list_it)) != NULL );
+				if( terminate_with_newline )
+					strcat(buf, "\n");
 				if( handle_result(buf) == SUCCESS ) {
 					result = SUCCESS;
 					break;

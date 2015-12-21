@@ -11,6 +11,7 @@
 int init_outfile( char *output_file );
 int handle_result( char *string );
 int initialize_hash_method( char *hash );
+int initialize_regex( char *regex );
 void deinit_hash();
 
 #endif
