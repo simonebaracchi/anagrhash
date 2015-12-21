@@ -14,7 +14,7 @@ Uses C and is written for Linux systems.
 ### Using
 
 <pre>
-anagrhash v0.1, an anagram generator/hash reverser
+anagrhash v0.2, an anagram generator/hash reverser
 Usage: anagrhash [OPTIONS] [token1 [token2 ...]] { xtoken1 xtoken2 [...] }
 Available options:
         -h hash         : Stops when hash is matched

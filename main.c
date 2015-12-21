@@ -16,7 +16,7 @@
 
 /* Global variables */
 char* program_name = "anagrhash";
-char* program_version = "0.1";
+char* program_version = "0.2";
 char* separators = NULL;
 int verbose = FALSE;
 int token_limit = 8;
