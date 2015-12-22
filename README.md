@@ -8,8 +8,9 @@ Uses C and is written for Linux systems.
 ### Building
 
 \# sudo apt-get install libmhash-dev libglib2.0-dev
-
 \# make
+
+The repo contains a binary which might work for you, at least if you are on an x86 Debian or similar.
 
 ### Using
 
