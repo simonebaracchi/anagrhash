@@ -2,15 +2,15 @@
 
 An anagram generator / reverse-hash resolver. 
 
-I wrote this mostly for educative purposes. 
 Uses C and is written for Linux systems.
+I wrote this mostly for educative purposes, to try out some different concurrency models and inter-thread communication methods in C. 
 
 ### Building
 
 \# sudo apt-get install libmhash-dev libglib2.0-dev
 \# make
 
-The repo contains a binary which might work for you, at least if you are on an x86 Debian or similar.
+The repo contains a binary which might work for you if you are on an x86 Debian or similar.
 
 ### Using
 
@@ -19,8 +19,8 @@ anagrhash v0.2, an anagram generator/hash reverser
 Usage: anagrhash [OPTIONS] [token1 [token2 ...]] { xtoken1 xtoken2 [...] }
 Available options:
         -h hash         : Stops when hash is matched
-        -a word         : Use every letter of word as token (makes anagrams of word)
         -r regex        : Stops when hash matches regex
+        -a word         : Use every letter of word as token (makes anagrams of word)
         -s separators   : Use separators between tokens
         -l n            : Use at most n tokens (default: 8)
         -i filename     : Load every line of file as a token
