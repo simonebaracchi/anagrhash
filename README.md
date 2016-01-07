@@ -1,10 +1,14 @@
 # anagrhash
 
-An anagram generator / reverse-hash resolver. 
+Anagrhash is a tool which can generate anagrams, and test them against a hash.
 
-Uses C and is written for Linux systems.
+It is a tool I wrote many years ago for educative purposes, to try out some different concurrency models and inter-thread communication methods in C, and get some basics of programming in the GNU/Linux environment.
 
-I wrote this mostly for educative purposes, to try out some different concurrency models and inter-thread communication methods in C. 
+It serves as an anagram generator, and can shuffle letters, but can also be set to shuffle whole words in a sentence, use tokens from a list (words which you don't want to appear simultaneously), and specify separators between tokens (like spaces or commas).
+
+It can also test anagrams which satisfies an exact target hash, or a hash specified with a regular expression.
+
+The home page for this project is http://simonebaracchi.eu/posts/anagrhash
 
 ### Building
 
