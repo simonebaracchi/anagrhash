@@ -3,14 +3,16 @@
 An anagram generator / reverse-hash resolver. 
 
 Uses C and is written for Linux systems.
+
 I wrote this mostly for educative purposes, to try out some different concurrency models and inter-thread communication methods in C. 
 
 ### Building
 
 \# sudo apt-get install libmhash-dev libglib2.0-dev
+
 \# make
 
-The repo contains a binary which might work for you if you are on an x86 Debian or similar.
+The repo contains a binary which might work for you, if you are on an x86 Debian or similar.
 
 ### Using
 
